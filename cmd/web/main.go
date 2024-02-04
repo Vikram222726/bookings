@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Vikram222726/bookings/pkg/config"
-	"github.com/Vikram222726/bookings/pkg/handlers"
-	"github.com/Vikram222726/bookings/pkg/render"
+	"github.com/Vikram222726/bookings/internals/config"
+	"github.com/Vikram222726/bookings/internals/handlers"
+	"github.com/Vikram222726/bookings/internals/render"
 	"github.com/alexedwards/scs/v2"
 )
 
@@ -38,7 +38,7 @@ func main(){
 	}
 
 	app.TemplateCache = tc
-	app.UseCache = true
+	app.UseCache = false
 
 	repo := handlers.NewRepo(&app)
 	handlers.SetRepo(repo)

@@ -8,8 +8,9 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/Vikram222726/bookings/pkg/config"
-	"github.com/Vikram222726/bookings/pkg/models"
+	"github.com/Vikram222726/bookings/internals/config"
+	"github.com/Vikram222726/bookings/internals/models"
+	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
@@ -81,13 +82,14 @@ func NewTemplate(a *config.AppConfig){
 // 2. We'll fetch the required asked template from this cache
 // 3. We'll render the template on the browser...
 
-func AddDefaultData(tempData *models.TemplateData) *models.TemplateData {
+func AddDefaultData(tempData *models.TemplateData, r *http.Request) *models.TemplateData {
 	// Add logic to render different template data based on different temp values
-	
+	tempData.CSRFToken = nosurf.Token(r)
+
 	return tempData
 }
 
-func RenderTemplate(w http.ResponseWriter, temp string, tempData *models.TemplateData){
+func RenderTemplate(w http.ResponseWriter, r *http.Request, temp string, tempData *models.TemplateData){
 	// First Create cache..
 	var tempCache map[string]*template.Template
 	if app.UseCache{
@@ -109,7 +111,7 @@ func RenderTemplate(w http.ResponseWriter, temp string, tempData *models.Templat
 	// }
 	buf := new(bytes.Buffer)
 
-	tempData = AddDefaultData(tempData)
+	tempData = AddDefaultData(tempData, r)
 
 	err := reqdTemplate.Execute(buf, tempData)
 	if err != nil{
